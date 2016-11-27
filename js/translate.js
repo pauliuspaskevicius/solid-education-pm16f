@@ -1,3 +1,12 @@
+// Type 'Language' declaration
+function Language (id) {
+  this.id = id;
+};
+
+// Object of type 'Language' initialization
+var language = new Language ('nl');
+console.log(language.id);
+
 var language = localStorage.getItem('language') || 'lt';
 
 $(document).ready(function() {
@@ -11,7 +20,6 @@ function setLanguage (languageCode) {
     translate (data);
     $('.language-selected').removeClass('icon-en').removeClass('icon-de').removeClass('icon-lt');
     $('.language-selected').addClass('icon-' + languageCode);
-
   });
 }
 
