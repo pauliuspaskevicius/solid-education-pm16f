@@ -3,34 +3,54 @@ function Language (id) {
   this.id = id;
   this.dictionary = null;
   this.flag = '/img/flags/' + id + '.svg';
+
+  this.load = function () {
+    var that = this;
+    $.getJSON('translations/' + that.id + '.json?t=' + new Date().getTime(), function(data){
+      that.dictionary = data;
+    });
+  }
 };
 // Type 'Translator' declaration
 function Translator () {
   this.languages = [];
+  this.languageActive = null;
 }
 
 // Object 'translator' of type 'Translaor' initialization
 var translator = new Translator ();
-translator.languages.push(new Language ('en'));
-translator.languages.push(new Language ('lt'));
-translator.languages.push(new Language ('de'));
+translator.languages['en'] = new Language ('en');
+translator.languages['lt'] = new Language ('lt');
+translator.languages['de'] = new Language ('de');
+translator.languageActive = localStorage.getItem('language') || 'lt';
+// Preload languages
+translator.languages['en'].load();
+translator.languages['lt'].load();
+translator.languages['de'].load();
 
-console.log(translator);
-
-var language = localStorage.getItem('language') || 'lt';
+var language = translator.languageActive;
 
 $(document).ready(function() {
   setLanguage (language);
 });
 
-function setLanguage (languageCode) {
-  language = languageCode;
-  $.getJSON('translations/' + language + '.json?t=' + new Date().getTime(), function(data){
-    try { localStorage.setItem('language', languageCode); } catch (e) {}
-    translate (data);
+function setLanguage (id) {
+  translator.languageActive = id;
+
+  if (translator.languages[id].dictionary == null) {
+    $.getJSON('translations/' + id + '.json?t=' + new Date().getTime(), function(data){
+      try { localStorage.setItem('language', id); } catch (e) {}
+      translate (data);
+      $('.language-selected').removeClass('icon-en').removeClass('icon-de').removeClass('icon-lt');
+      $('.language-selected').addClass('icon-' + id);
+    });
+  }
+  else {
+    try { localStorage.setItem('language', id); } catch (e) {}
+    translate (translator.languages[id].dictionary);
     $('.language-selected').removeClass('icon-en').removeClass('icon-de').removeClass('icon-lt');
-    $('.language-selected').addClass('icon-' + languageCode);
-  });
+    $('.language-selected').addClass('icon-' + id);
+  }
 }
 
 function translate (data) {
