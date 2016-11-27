@@ -1,11 +1,21 @@
 // Type 'Language' declaration
 function Language (id) {
   this.id = id;
+  this.dictionary = null;
+  this.flag = '/img/flags/' + id + '.svg';
 };
+// Type 'Translator' declaration
+function Translator () {
+  this.languages = [];
+}
 
-// Object of type 'Language' initialization
-var language = new Language ('nl');
-console.log(language.id);
+// Object 'translator' of type 'Translaor' initialization
+var translator = new Translator ();
+translator.languages.push(new Language ('en'));
+translator.languages.push(new Language ('lt'));
+translator.languages.push(new Language ('de'));
+
+console.log(translator);
 
 var language = localStorage.getItem('language') || 'lt';
 
